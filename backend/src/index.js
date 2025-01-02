@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';  // Import cookie-parser
 import authRoutes from './routes/auth.routes.js';
+import messageRotues from './routes/message.routes.js';
 import connectDB from './libs/db.js';  // Import the database connection
 import connectCloudinary from './libs/cloudinary.js';
 
@@ -22,6 +23,7 @@ app.use(cookieParser());  // This makes cookies accessible via req.cookies
 
 // Use the auth routes for the '/api/auth' endpoint
 app.use('/api/auth', authRoutes);
+app.use('/api/message', messageRotues);
 
 // Define the port
 const PORT = process.env.PORT || 3000;
