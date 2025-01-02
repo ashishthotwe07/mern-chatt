@@ -35,11 +35,7 @@ export const signup = async (req, res) => {
       "-password"
     );
 
-    res.status(201).json({
-      message: "User created successfully",
-      user: userWithoutPassword,
-      token: token,
-    });
+    res.status(201).json(userWithoutPassword);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error, please try again later" });
@@ -71,11 +67,7 @@ export const signin = async (req, res) => {
       "-password"
     );
 
-    res.status(200).json({
-      message: "Signin successful",
-      user: userWithoutPassword, // Send user details without password
-      token: token, // Include token in the response
-    });
+    res.status(200).json(userWithoutPassword);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error, please try again later" });
@@ -123,10 +115,7 @@ export const updateProfile = async (req, res) => {
       { new: true } // Return the updated document
     ).select("-password");
 
-    res.status(200).json({
-      message: "Profile image updated successfully",
-      user: updatedUser,
-    });
+    res.status(200).json(updatedUser);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error, please try again later" });
@@ -146,10 +135,7 @@ export const checkAuth = async (req, res) => {
     // Fetch user details without password
     const userDetails = await User.findById(user._id).select('-password');
 
-    res.status(200).json({
-      message: 'User is authenticated',
-      user: userDetails,
-    });
+    res.status(200).json(userDetails);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error, please try again later' });

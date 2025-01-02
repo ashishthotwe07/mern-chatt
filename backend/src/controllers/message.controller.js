@@ -8,9 +8,7 @@ export const getUsersForSidebar = async (req, res) => {
         // Fetch all users excluding the current authenticated user
         const users = await User.find({ _id: { $ne: currentUserId } }).select('-password'); // Exclude the password field and the current user
 
-        res.status(200).json({
-            users: users,
-        });
+        res.status(200).json(users);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error, please try again later' });
