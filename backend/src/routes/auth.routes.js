@@ -1,8 +1,9 @@
 // src/routes/auth.routes.js
 
 import express from 'express';
-import { signup, signin, signout, updateProfile } from '../controllers/auth.controller.js'; // Import controller actions
+import { signup, signin, signout, updateProfile, checkAuth } from '../controllers/auth.controller.js'; // Import controller actions
 import { protectedRoute } from '../middlewares/auth.middleware.js';
+import upload from '../libs/multer.js';
 
 const router = express.Router();
 
@@ -16,6 +17,9 @@ router.post('/signin', signin);
 router.post('/signout', signout);
 
 // Define the update-profile route with a protected route middleware
-router.put('/update-profile', protectedRoute, updateProfile); 
+router.put("/update-profile", protectedRoute, upload.single("profilePic"), updateProfile);
+
+// Define a route to check if the user is authenticated
+router.get('/check', protectedRoute, checkAuth);
 
 export default router;

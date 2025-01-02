@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js"; // Import the User model
-import generateToken from "../libs/utils.js"; // Import the generateToken function
+import generateToken from "../libs/utils.js";
+import { v2 as cloudinary } from 'cloudinary'
 
 // Handle user signup
 export const signup = async (req, res) => {
@@ -97,8 +98,61 @@ export const signout = (req, res) => {
 
 
 
-export const updateProfile = (req, res) => {
-    
-    res.status(200).json({ message: 'Profile updated successfully (to be implemented)' });
-  };
-  
+
+// Update user profile (Profile Image Only)
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id; 
+    const profilePic = req.file; // File uploaded using multer
+
+    if (!profilePic) {
+      return res.status(400).json({ message: "No profile image uploaded" });
+    }
+
+    // Upload the image to Cloudinary
+    const uploadResponse = await cloudinary.uploader.upload(profilePic.path, {
+      folder: "user_profiles",
+      public_id: `profile_${userId}`,
+      overwrite: true,
+    });
+
+    // Update the user's profile image in the database
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true } // Return the updated document
+    ).select("-password");
+
+    res.status(200).json({
+      message: "Profile image updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error, please try again later" });
+  }
+};
+
+
+export const checkAuth = async (req, res) => {
+  try {
+    // req.user is populated by the `protectedRoute` middleware
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Fetch user details without password
+    const userDetails = await User.findById(user._id).select('-password');
+
+    res.status(200).json({
+      message: 'User is authenticated',
+      user: userDetails,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error, please try again later' });
+  }
+};
+

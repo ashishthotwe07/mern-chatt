@@ -3,13 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  
   "type": "module",
-
-"scripts": {
-  "dev": "nodemon ./src/index.js"
-},
-
+  "scripts": {
+    "dev": "nodemon ./src/index.js"
+  },
   "keywords": [],
   "author": "Ashish Thotwe",
   "license": "ISC",
@@ -21,6 +18,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.3",
+    "multer": "^1.4.5-lts.1",
     "socket.io": "^4.8.1"
   }
 }

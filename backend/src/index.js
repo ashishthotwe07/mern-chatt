@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';  // Import cookie-parser
 import authRoutes from './routes/auth.routes.js';
 import connectDB from './libs/db.js';  // Import the database connection
+import connectCloudinary from './libs/cloudinary.js';
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const app = express();
 
 // Connect to MongoDB
 connectDB();
+await connectCloudinary();
 
 // Middleware to parse JSON requests
 app.use(express.json());
