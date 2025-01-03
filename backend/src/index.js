@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';  // Import cookie-parser
 import cors from 'cors';  
 import authRoutes from './routes/auth.routes.js';
 import messageRotues from './routes/message.routes.js';
-import connectDB from './libs/db.js';  // Import the database connection
+import connectDB from './libs/db.js';  
 import connectCloudinary from './libs/cloudinary.js';
 import { app ,server} from './libs/socket.js';
 
@@ -23,12 +23,17 @@ app.use(express.json());
 app.use(cookieParser());  // This makes cookies accessible via req.cookies
 
 
+// Configure CORS middleware
+const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
+
+console.log(process.env.FRONTEND_URL);
+console.log(allowedOrigin)
+
 app.use(cors({
-  origin: 'http://localhost:5173',  // Allow requests from this origin
+  origin: allowedOrigin,  // Allow requests only from this URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed HTTP methods
   credentials: true,  // Allow cookies to be sent along with requests
 }));
-
 // Use the auth routes for the '/api/auth' endpoint
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRotues);
