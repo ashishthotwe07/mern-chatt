@@ -11,10 +11,6 @@ const Profile = () => {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Create a URL for the selected image and show preview
-        const previewUrl = URL.createObjectURL(file);
-        setImagePreview(previewUrl); // Set the preview URL
-
         // Call the updateProfile function from zustand store
         await updateProfile(file);
     };
