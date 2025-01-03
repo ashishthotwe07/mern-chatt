@@ -35,6 +35,10 @@ app.use(cors({
   credentials: true,  // Allow cookies to be sent along with requests
 }));
 // Use the auth routes for the '/api/auth' endpoint
+
+app.get('/' , (req ,res)=>{
+  res.send("API IS WORKING");
+})
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRotues);
 
