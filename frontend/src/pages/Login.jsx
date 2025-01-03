@@ -1,136 +1,119 @@
-import React, { useState } from 'react';
-import { Mail, Lock } from 'lucide-react'; // importing lucide-react icons
-import { toast } from 'react-hot-toast'; // Importing react-hot-toast
-import { Loader } from 'lucide-react'; // Importing the loader component
-import useAuthStore from '../store/useAuthStore';
-import { Link } from 'react-router-dom'; // Importing Link for navigation
+import { useState } from "react";
+import AuthImagePattern from "../components/AuthImagePattern";
+import { Link } from "react-router-dom";
+import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from "lucide-react";
+import useAuthStore from "../store/useAuthStore";
 
 const Login = () => {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: ''
-    });
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const { login, isLoggingIn } = useAuthStore();
 
-    const [showPassword, setShowPassword] = useState(false);
-    const { isLoggingIn, login } = useAuthStore();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    login(formData);
+  };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
+  return (
+    <div className="h-screen grid lg:grid-cols-2">
+      {/* Left Side - Form */}
+      <div className="flex flex-col justify-center items-center p-6 sm:p-12">
+        <div className="w-full max-w-md space-y-8">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <div className="flex flex-col items-center gap-2 group">
+              <div
+                className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20
+              transition-colors"
+              >
+                <MessageSquare className="w-6 h-6 text-primary" />
+              </div>
+              <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
+              <p className="text-base-content/60">Sign in to your account</p>
+            </div>
+          </div>
 
-    const validateForm = () => {
-        let isValid = true;
-
-        if (!formData.email) {
-            toast.error('Email is required.');
-            isValid = false;
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) { // Email format check
-            toast.error('Please enter a valid email address.');
-            isValid = false;
-        }
-
-        if (!formData.password) {
-            toast.error('Password is required.');
-            isValid = false;
-        }
-
-        return isValid;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        // Validate form and prevent submission if invalid
-        if (!validateForm()) {
-            return;
-        }
-
-        try {
-            await login(formData);
-        } catch (error) {
-            toast.error('Error during login. Please try again.');
-        }
-    };
-
-    return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-800"> {/* Darker background */}
-            <form
-                onSubmit={handleSubmit}
-                
-                className="bg-gray-900 p-6 rounded-lg shadow-lg w-full sm:w-96 border-2 border-gray-600"
-            >
-                <h2 className="text-3xl font-semibold mb-6 text-center text-gray-300">Login to Your Account</h2>
-
-                {/* Email */}
-                <div className="mb-4">
-                    <label className="flex items-center border-2 border-gray-600 p-2 rounded-md w-full bg-gray-700 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-gray-500">
-                        <Mail className="text-gray-400 mr-2" size={20} />
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Email"
-                            className="w-full outline-none bg-transparent text-gray-300"
-                        />
-                    </label>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Email</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-base-content/40" />
                 </div>
+                <input
+                  type="email"
+                  className={`input input-bordered w-full pl-10`}
+                  placeholder="you@example.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+              </div>
+            </div>
 
-                {/* Password */}
-                <div className="mb-4">
-                    <label className="flex items-center border-2 border-gray-600 p-2 rounded-md w-full bg-gray-700 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-gray-500">
-                        <Lock className="text-gray-400 mr-2" size={20} />
-                        <input
-                            type={showPassword ? 'text' : 'password'}
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Password"
-                            className="w-full outline-none bg-transparent text-gray-300"
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="text-gray-400 ml-2"
-                        >
-                            {showPassword ? 'Hide' : 'Show'}
-                        </button>
-                    </label>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Password</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-base-content/40" />
                 </div>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className={`input input-bordered w-full pl-10`}
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-base-content/40" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-base-content/40" />
+                  )}
+                </button>
+              </div>
+            </div>
 
-                {/* Submit Button */}
-                <div className="mt-6">
-                    <button
-                        type="submit"
-                        disabled={isLoggingIn}
-                        className="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-500"
-                    >
-                        {isLoggingIn ? (
-                            <div className="flex justify-center">
-                                <Loader className="animate-spin" size={20} />
-                            </div>
-                        ) : (
-                            'Login'
-                        )}
-                    </button>
-                </div>
+            <button type="submit" className="btn btn-primary w-full" disabled={isLoggingIn}>
+              {isLoggingIn ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Sign in"
+              )}
+            </button>
+          </form>
 
-                {/* Sign Up Link */}
-                <div className="mt-4 text-center">
-                    <p className="text-sm text-indigo-400">
-                        Don't have an account?{' '}
-                        <Link to="/signup" className="text-gray-500 hover:underline">
-                            Sign Up
-                        </Link>
-                    </p>
-                </div>
-            </form>
+          <div className="text-center">
+            <p className="text-base-content/60">
+              Don&apos;t have an account?{" "}
+              <Link to="/signup" className="link link-primary">
+                Create account
+              </Link>
+            </p>
+          </div>
         </div>
-    );
-};
+      </div>
 
+      {/* Right Side - Image/Pattern */}
+      <AuthImagePattern
+        title={"Welcome back!"}
+        subtitle={"Sign in to continue your conversations and catch up with your messages."}
+      />
+    </div>
+  );
+};
 export default Login;

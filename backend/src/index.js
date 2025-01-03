@@ -31,7 +31,7 @@ app.use(cors({
 
 // Use the auth routes for the '/api/auth' endpoint
 app.use('/api/auth', authRoutes);
-app.use('/api/message', messageRotues);
+app.use('/api/messages', messageRotues);
 
 // Define the port
 const PORT = process.env.PORT || 3000;

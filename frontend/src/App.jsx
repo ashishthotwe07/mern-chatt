@@ -11,9 +11,12 @@ import Login from './pages/Login';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import Home from './pages/Home';
+import useThemeStore from './store/useThemeStore';
 
 const App = () => {
   const { checkAuth, authUser, isCheckingAuth } = useAuthStore();
+
+  const {theme} = useThemeStore();
 
   // Check authentication status when the app loads
   useEffect(() => {
@@ -32,7 +35,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div data-theme={theme}>
       <Navbar />
       <Routes>
         {/* Home route - only accessible if user is authenticated */}

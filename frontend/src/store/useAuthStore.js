@@ -39,7 +39,7 @@ const useAuthStore = create((set) => ({
       const response = await axiosInstance.post('/auth/signup', userData);
 
       if (response.status === 201) {
-        toast.success('Account created successfully!'); 
+        toast.success('Account created successfully!');
         set({ authUser: response.data, isSigningUp: false });
       } else {
         toast.error('Signup failed, try again!');
@@ -53,21 +53,21 @@ const useAuthStore = create((set) => ({
   },
 
 
-    // Async function for user logout
-    logout: async () => {
-      try {
-        await axiosInstance.post('/auth/signout');
-        toast.success('Logged out successfully!');
-        set({ authUser: null });
-      } catch (error) {
-        console.error('Logout error:', error);
-        toast.error('An error occurred during logout.');
-      }
-    },
+  // Async function for user logout
+  logout: async () => {
+    try {
+      await axiosInstance.post('/auth/signout');
+      toast.success('Logged out successfully!');
+      set({ authUser: null });
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('An error occurred during logout.');
+    }
+  },
 
 
 
-      // Async function for user signin (login)
+  // Async function for user signin (login)
   login: async (userData) => {
     set({ isLoggingIn: true }); // Start login process
 
@@ -85,6 +85,36 @@ const useAuthStore = create((set) => ({
       console.error('Login error:', error);
       toast.error(error.response?.data?.message || 'An error occurred during login.');
       set({ isLoggingIn: false, errorMessage: error.response?.data?.message || 'An error occurred during login.' });
+    }
+  },
+
+
+  // Async function to update profile image
+  updateProfile: async (file) => {
+    set({ isUpdatingProfile: true });
+
+    const formData = new FormData();
+    formData.append('profilePic', file);  // Append the file here
+
+    try {
+      // Send the PUT request to update the profile image
+      const response = await axiosInstance.put('/auth/update-profile', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // This is important for file uploads
+        },
+      });
+
+      if (response.status === 200) {
+        toast.success('Profile image updated successfully!');
+        set({ authUser: response.data, isUpdatingProfile: false });
+      } else {
+        toast.error('Profile image update failed, try again!');
+        set({ isUpdatingProfile: false });
+      }
+    } catch (error) {
+      console.error('Update Profile error:', error);
+      toast.error(error.response?.data?.message || 'An error occurred while updating profile image.');
+      set({ isUpdatingProfile: false });
     }
   },
 
