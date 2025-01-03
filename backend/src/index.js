@@ -23,14 +23,7 @@ app.use(express.json());
 app.use(cookieParser());  // This makes cookies accessible via req.cookies
 
 
-// Configure CORS middleware
-const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
-
-app.use(cors({
-  origin: allowedOrigin,  // Allow requests only from this URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed HTTP methods
-  credentials: true,  // Allow cookies to be sent along with requests
-}));
+app.use(cors());
 // Use the auth routes for the '/api/auth' endpoint
 
 app.get('/' , (req ,res)=>{
