@@ -6,34 +6,29 @@ import toast from 'react-hot-toast';
 import { io } from "socket.io-client";
 
 
-const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5000" : "/";
 
-const useAuthStore = create((set ,get) => ({
+const useAuthStore = create((set, get) => ({
   authUser: null,
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
   isCheckingAuth: true,
-  onlineUsers:[],
+  onlineUsers: [],
   socket: null,
 
 
   // Async function to check authentication status
   checkAuth: async () => {
-    set({ isCheckingAuth: true }); // Set checking status to true
     try {
+      const res = await axiosInstance.get("/auth/check");
 
-      const response = await axiosInstance.get('/auth/check');
-
-      if (response.status === 200) {
-        set({ authUser: response.data, isCheckingAuth: false });
-        get().connectSocket();
-      } else {
-        set({ authUser: null, isCheckingAuth: false });
-      }
+      set({ authUser: res.data });
+      get().connectSocket();
     } catch (error) {
-      console.error('Error checking authentication:', error);
-      set({ authUser: null, isCheckingAuth: false });
+      set({ authUser: null });
+    } finally {
+      set({ isCheckingAuth: false });
     }
   },
 

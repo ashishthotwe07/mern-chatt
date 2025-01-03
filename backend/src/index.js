@@ -23,7 +23,13 @@ app.use(express.json());
 app.use(cookieParser());  // This makes cookies accessible via req.cookies
 
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 // Use the auth routes for the '/api/auth' endpoint
 
 app.get('/' , (req ,res)=>{
