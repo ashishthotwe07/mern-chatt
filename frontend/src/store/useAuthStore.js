@@ -10,6 +10,7 @@ const useAuthStore = create((set) => ({
   isLoggingIn: false,
   isUpdatingProfile: false,
   isCheckingAuth: true,
+  onlineUsers:[],
 
 
   // Async function to check authentication status

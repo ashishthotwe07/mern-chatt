@@ -4,7 +4,7 @@ import {create} from 'zustand';
 import axiosInstance from '../lib/axios';
 import { toast } from 'react-hot-toast'; // Import the toast for notifications
 
-const useChatStore = create((set) => ({
+const useChatStore = create((set ,get) => ({
     messages: [],
     users: [],
     selectedUser: null,
@@ -43,6 +43,17 @@ const useChatStore = create((set) => ({
             set({ isMessagesLoading: false });
         }
     },
+
+
+    sendMessage: async (messageData) => {
+        const { selectedUser, messages } = get();
+        try {
+          const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
+          set({ messages: [...messages, res.data] });
+        } catch (error) {
+          toast.error(error.response.data.message);
+        }
+      },
 
     setSelectedUser: (selectedUser) => set({ selectedUser }),
 }));
