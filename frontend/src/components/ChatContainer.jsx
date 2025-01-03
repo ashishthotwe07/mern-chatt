@@ -1,11 +1,11 @@
+import useChatStore from "../store/useChatStore";
 import { useEffect, useRef } from "react";
 
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "../skeletons/MessageSkeleton";
-import { formatMessageTime } from "../lib/utils";
-import useChatStore from "../store/useChatStore";
 import useAuthStore from "../store/useAuthStore";
+import { formatMessageTime } from "../lib/utils";
 
 const ChatContainer = () => {
     const {
@@ -13,13 +13,19 @@ const ChatContainer = () => {
         getMessages,
         isMessagesLoading,
         selectedUser,
+        subscribeToMessages,
+        unsubscribeFromMessages,
     } = useChatStore();
     const { authUser } = useAuthStore();
     const messageEndRef = useRef(null);
 
     useEffect(() => {
         getMessages(selectedUser._id);
-    }, [selectedUser._id, getMessages]);
+
+        subscribeToMessages();
+
+        return () => unsubscribeFromMessages();
+    }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
 
     useEffect(() => {
         if (messageEndRef.current && messages) {
@@ -45,7 +51,7 @@ const ChatContainer = () => {
                 {messages.map((message) => (
                     <div
                         key={message._id}
-                        className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
+                        className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start "}`}
                         ref={messageEndRef}
                     >
                         <div className=" chat-image avatar">
@@ -64,8 +70,12 @@ const ChatContainer = () => {
                             <time className="text-xs opacity-50 ml-1">
                                 {formatMessageTime(message.createdAt)}
                             </time>
+
                         </div>
-                        <div className="chat-bubble flex flex-col">
+                        <div className={`chat-bubble flex flex-col ${message.senderId === authUser._id
+                                ? "bg-primary text-primary-content" 
+                                : "bg-base-300 text-gray-500" 
+                            }`}>
                             {message.image && (
                                 <img
                                     src={message.image}

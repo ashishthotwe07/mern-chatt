@@ -6,11 +6,11 @@ import authRoutes from './routes/auth.routes.js';
 import messageRotues from './routes/message.routes.js';
 import connectDB from './libs/db.js';  // Import the database connection
 import connectCloudinary from './libs/cloudinary.js';
+import { app ,server} from './libs/socket.js';
 
 dotenv.config();
 
-// Create an Express app
-const app = express();
+
 
 // Connect to MongoDB
 connectDB();
@@ -37,6 +37,6 @@ app.use('/api/messages', messageRotues);
 const PORT = process.env.PORT || 3000;
 
 // Start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
