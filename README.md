@@ -60,8 +60,7 @@ This project demonstrates an end-to-end chat solution with key functionalities l
    - **User Connection Management**: Tracks online users and manages their socket connections.
 
 ### 6.  **Themes with Daisy UI**
-    **Theme Customization** : Users can switch between different chat themes to personalize the look and feel of the chat interface.
-    **Daisy UI Integration**: Daisy UI is used for easily switching themes in the app. Themes are applied dynamically, allowing users to choose from a variety of styles to enhance their chatting experience.
+   - **Theme Customization**: Users can switch between different chat themes to personalize the look and feel of the chat interface.
 ---
 
 ## Routes and API Endpoints
