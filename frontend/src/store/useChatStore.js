@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import  axiosInstance  from "../lib/axios";
-import  useAuthStore  from "./useAuthStore";
+import axiosInstance from "../lib/axios";
+import useAuthStore from "./useAuthStore";
 
- const useChatStore = create((set, get) => ({
+const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
   selectedUser: null,
@@ -33,11 +33,17 @@ import  useAuthStore  from "./useAuthStore";
       set({ isMessagesLoading: false });
     }
   },
+
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
     try {
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
+
+      // Add the sent message to the current chat
       set({ messages: [...messages, res.data] });
+
+      get().getUsers(); 
+
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -50,12 +56,25 @@ import  useAuthStore  from "./useAuthStore";
     const socket = useAuthStore.getState().socket;
 
     socket.on("newMessage", (newMessage) => {
-      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
-      if (!isMessageSentFromSelectedUser) return;
+      const { messages, users } = get();
 
+      // If the message is from the selected user, add it to the current messages list
+      if (newMessage.senderId === selectedUser._id) {
+        set({
+          messages: [...messages, newMessage],
+        });
+      }
+
+      // Also, update the users list for the sender's last message
       set({
-        messages: [...get().messages, newMessage],
+        users: users.map(user =>
+          user._id === newMessage.senderId
+            ? { ...user, lastMessage: newMessage }  // Update the sender's last message
+            : user
+        ),
       });
+
+      get().getUsers();  // Refresh the users list (optional)
     });
   },
 

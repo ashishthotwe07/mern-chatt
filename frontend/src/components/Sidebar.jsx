@@ -5,11 +5,12 @@ import useChatStore from "../store/useChatStore";
 import useAuthStore from "../store/useAuthStore";
 
 const Sidebar = () => {
-  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
+  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading, messages } = useChatStore();
 
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
+  console.log(messages);
   useEffect(() => {
     getUsers();
   }, [getUsers]);
@@ -18,7 +19,7 @@ const Sidebar = () => {
     ? users.filter((user) => onlineUsers.includes(user._id))
     : users;
 
-  if (isUsersLoading) return <SidebarSkeleton />;
+  // if (isUsersLoading) return <SidebarSkeleton />;
 
   return (
     <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
@@ -27,7 +28,7 @@ const Sidebar = () => {
           <Users className="size-6" />
           <span className="font-medium hidden lg:block">Contacts</span>
         </div>
-        {/* TODO: Online filter toggle */}
+
         <div className="mt-3 hidden lg:flex items-center gap-2">
           <label className="cursor-pointer flex items-center gap-2">
             <input
@@ -71,7 +72,14 @@ const Sidebar = () => {
             <div className="hidden lg:block text-left min-w-0">
               <div className="font-medium truncate">{user.fullname}</div>
               <div className="text-sm text-zinc-400">
-                {onlineUsers.includes(user._id) ? "Online" : "Offline"}
+                {user.latestChat
+                  ? user.latestChat.text
+                    ? user.latestChat.text
+                    : user.latestChat.image
+                      ? "image" 
+                      : ""
+                  : ""}
+
               </div>
             </div>
           </button>
