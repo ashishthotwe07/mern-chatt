@@ -88,9 +88,6 @@ export const signout = (req, res) => {
   }
 };
 
-
-
-
 // Update user profile (Profile Image Only)
 export const updateProfile = async (req, res) => {
   try {
@@ -122,7 +119,6 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-
 export const checkAuth = async (req, res) => {
   try {
     // req.user is populated by the `protectedRoute` middleware
@@ -139,6 +135,53 @@ export const checkAuth = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error, please try again later' });
+  }
+};
+
+// Update user account (except password)
+export const updateAccount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { fullname, email } = req.body;
+
+    // Update only the necessary fields (e.g., fullname, email)
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { fullname, email },
+      { new: true }
+    ).select("-password");
+
+    // If the user doesn't exist, return an error
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error, please try again later" });
+  }
+};
+
+// Delete user account
+export const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Delete the user's profile picture from Cloudinary
+    const user = await User.findById(userId);
+    if (user.profilePic) {
+      const publicId = user.profilePic.split("/").pop().split(".")[0]; // Extract public ID from URL
+      await cloudinary.uploader.destroy(`user_profiles/profile_${userId}`);
+    }
+
+    // Delete the user from the database
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({ message: "Account deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error, please try again later" });
   }
 };
 

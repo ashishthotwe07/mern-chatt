@@ -1,7 +1,7 @@
 // src/routes/auth.routes.js
 
 import express from 'express';
-import { signup, signin, signout, updateProfile, checkAuth } from '../controllers/auth.controller.js'; // Import controller actions
+import { signup, signin, signout, updateProfile, checkAuth, updateAccount, deleteAccount } from '../controllers/auth.controller.js'; // Import controller actions
 import { protectedRoute } from '../middlewares/auth.middleware.js';
 import upload from '../libs/multer.js';
 
@@ -21,5 +21,12 @@ router.put("/update-profile", protectedRoute, upload.single("profilePic"), updat
 
 // Define a route to check if the user is authenticated
 router.get('/check', protectedRoute, checkAuth);
+
+
+// Define the route to update user details (excluding password)
+router.put("/update-account", protectedRoute, updateAccount);
+
+// Define the route to delete user account
+router.delete("/delete-account", protectedRoute, deleteAccount);
 
 export default router;

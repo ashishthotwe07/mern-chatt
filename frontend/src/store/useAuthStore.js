@@ -122,6 +122,41 @@ const useAuthStore = create((set, get) => ({
     }
   },
 
+  // Update account information (email, name, password)
+  updateAccount: async (updatedData) => {
+    try {
+      const response = await axiosInstance.put('/auth/update-account', updatedData);
+
+      if (response.status === 200) {
+        toast.success('Account updated successfully!');
+        set({ authUser: response.data });
+      } else {
+        toast.error('Account update failed, try again!');
+      }
+    } catch (error) {
+      console.error('Update Account error:', error);
+      toast.error(error.response?.data?.message || 'An error occurred while updating account.');
+    }
+  },
+
+  // Delete account
+  deleteAccount: async () => {
+    try {
+      const response = await axiosInstance.delete('/auth/delete-account');
+
+      if (response.status === 200) {
+        toast.success('Account deleted successfully!');
+        set({ authUser: null });
+        get().disconnectSocket();
+      } else {
+        toast.error('Account deletion failed, try again!');
+      }
+    } catch (error) {
+      console.error('Delete Account error:', error);
+      toast.error(error.response?.data?.message || 'An error occurred while deleting account.');
+    }
+  },
+
 
   connectSocket: () => {
     const { authUser } = get();

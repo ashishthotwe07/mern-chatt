@@ -29,7 +29,7 @@ const ChatContainer = () => {
 
     useEffect(() => {
         if (messageEndRef.current && messages) {
-            messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+            messageEndRef.current.scrollIntoView();
         }
     }, [messages]);
 
@@ -73,8 +73,8 @@ const ChatContainer = () => {
 
                         </div>
                         <div className={`chat-bubble flex flex-col ${message.senderId === authUser._id
-                                ? "bg-primary text-primary-content" 
-                                : "bg-base-300 text-gray-500" 
+                            ? "bg-primary text-primary-content"
+                            : "bg-base-300 text-gray-500"
                             }`}>
                             {message.image && (
                                 <img
