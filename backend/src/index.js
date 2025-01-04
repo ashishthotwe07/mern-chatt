@@ -15,8 +15,10 @@ const __dirname = path.resolve();
 connectDB();
 await connectCloudinary();
 
-// Middleware to parse JSON requests
-app.use(express.json());
+
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
 
 // Middleware to parse cookies
 app.use(cookieParser());  // This makes cookies accessible via req.cookies

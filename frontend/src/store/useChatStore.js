@@ -42,7 +42,7 @@ const useChatStore = create((set, get) => ({
       // Add the sent message to the current chat
       set({ messages: [...messages, res.data] });
 
-      get().getUsers(); 
+      get().getUsers();
 
     } catch (error) {
       toast.error(error.response.data.message);
@@ -82,6 +82,42 @@ const useChatStore = create((set, get) => ({
     const socket = useAuthStore.getState().socket;
     socket.off("newMessage");
   },
+
+
+
+  // New Functionality - Clear Chat
+  clearChat: async () => {
+    const { selectedUser } = get();
+    try {
+      // Send a request to the backend to clear the chat between the users
+      await axiosInstance.delete(`/messages/clearChat/${selectedUser._id}`);
+
+      // Clear the messages locally as well
+      set({ messages: [] });
+      get().getUsers();
+
+      toast.success("Chat cleared successfully");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
+  // New Functionality - Delete Single Message
+  deleteMessage: async (messageId) => {
+    try {
+      // Send a request to the backend to delete the message by its ID
+      await axiosInstance.delete(`/messages/deleteMessage/${messageId}`);
+
+      // Remove the deleted message from the messages list
+      set({ messages: get().messages.filter(msg => msg._id !== messageId) });
+      get().getUsers();
+
+      toast.success("Message deleted successfully");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
 }));

@@ -118,3 +118,46 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ message: 'Server error, please try again later' });
   }
 };
+
+
+
+
+// Controller for clearing chat between two users
+export const clearChat = async (req, res) => {
+  try {
+    const currentUserId = req.user._id;
+    const { id } = req.params; // Get the receiver's user ID from the request parameters
+
+    // Delete all messages between the current user and the specified user
+    await Message.deleteMany({
+      $or: [
+        { senderId: currentUserId, receiverId: id },
+        { senderId: id, receiverId: currentUserId },
+      ],
+    });
+
+    res.status(200).json({ message: 'Chat cleared successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error, please try again later' });
+  }
+};
+
+// Controller for deleting a single message
+export const deleteMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params; // Get the message ID from the request parameters
+
+    // Delete the message by its ID
+    const deletedMessage = await Message.findByIdAndDelete(messageId);
+
+    if (!deletedMessage) {
+      return res.status(404).json({ message: 'Message not found' });
+    }
+
+    res.status(200).json({ message: 'Message deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error, please try again later' });
+  }
+};

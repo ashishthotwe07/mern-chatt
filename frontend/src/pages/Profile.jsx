@@ -21,8 +21,6 @@ const Profile = () => {
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
-        // Call the updateProfile function from zustand store
         await updateProfile(file);
     };
 

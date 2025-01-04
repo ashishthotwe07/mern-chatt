@@ -10,6 +10,7 @@ const Sidebar = () => {
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileUser, setProfileUser] = useState(null); // Store the user for the modal
+  const [searchQuery, setSearchQuery] = useState(""); // Search query state
 
   useEffect(() => {
     getUsers();
@@ -18,6 +19,11 @@ const Sidebar = () => {
   const filteredUsers = showOnlineOnly
     ? users.filter((user) => onlineUsers.includes(user._id))
     : users;
+
+  // Implement the search functionality
+  const searchedUsers = filteredUsers.filter((user) =>
+    user.fullname.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleUserClick = (user) => {
     setSelectedUser(user); // Open chat window
@@ -40,9 +46,16 @@ const Sidebar = () => {
   return (
     <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
       <div className="border-b border-base-300 w-full p-5">
-        <div className="flex items-center gap-2">
-          <Users className="size-6" />
-          <span className="font-medium hidden lg:block">Contacts</span>
+
+        {/* Modern Search Box */}
+        <div className="mt-3">
+          <input
+            type="text"
+            placeholder="Search contacts"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="input input-bordered w-full"
+          />
         </div>
 
         <div className="mt-3 hidden lg:flex items-center gap-2">
@@ -60,44 +73,45 @@ const Sidebar = () => {
       </div>
 
       <div className="overflow-y-auto w-full py-3">
-        {filteredUsers.map((user) => (
-          <div
-            key={user._id}
-            className={`w-full p-3 flex items-center gap-3 hover:bg-base-300 transition-colors cursor-pointer
-            ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}`}
-            onClick={() => handleUserClick(user)} // Open chat window when clicking anywhere except the image
-          >
+        {/* Render searched and filtered users */}
+        {searchedUsers.length > 0 ? (
+          searchedUsers.map((user) => (
             <div
-              className="relative mx-auto lg:mx-0 cursor-pointer"
-              onClick={(e) => handleImageClick(user, e)} // Open profile modal when clicking on the image
+              key={user._id}
+              className={`w-full p-3 flex items-center gap-3 hover:bg-base-300 transition-colors cursor-pointer
+              ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}`}
+              onClick={() => handleUserClick(user)} // Open chat window when clicking anywhere except the image
             >
-              <img
-                src={user.profilePic || "https://github.com/burakorkmez/fullstack-chat-app/blob/master/frontend/public/avatar.png?raw=true"}
-                alt={user.name}
-                className="size-12 object-cover rounded-full"
-              />
-              {onlineUsers.includes(user._id) && (
-                <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
-              )}
-            </div>
+              <div
+                className="relative mx-auto lg:mx-0 cursor-pointer"
+                onClick={(e) => handleImageClick(user, e)} // Open profile modal when clicking on the image
+              >
+                <img
+                  src={user.profilePic || "https://github.com/burakorkmez/fullstack-chat-app/blob/master/frontend/public/avatar.png?raw=true"}
+                  alt={user.name}
+                  className="size-12 object-cover rounded-full"
+                />
+                {onlineUsers.includes(user._id) && (
+                  <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
+                )}
+              </div>
 
-            <div className="hidden lg:flex flex-col text-left min-w-0">
-              <span className="font-medium truncate">{user.fullname}</span>
-              <span className="text-sm text-zinc-400 truncate">
-                {user.latestChat
-                  ? user.latestChat.text
+              <div className="hidden lg:flex flex-col text-left min-w-0">
+                <span className="font-medium truncate">{user.fullname}</span>
+                <span className="text-sm text-zinc-400 truncate">
+                  {user.latestChat
                     ? user.latestChat.text
-                    : user.latestChat.image
-                      ? "image"
-                      : ""
-                  : ""}
-              </span>
+                      ? user.latestChat.text
+                      : user.latestChat.image
+                        ? "image"
+                        : ""
+                    : ""}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
-
-        {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          ))
+        ) : (
+          <div className="text-center text-zinc-500 py-4">No users found</div>
         )}
       </div>
 
@@ -181,9 +195,6 @@ const Sidebar = () => {
           </div>
         </div>
       )}
-
-
-
     </aside>
   );
 };

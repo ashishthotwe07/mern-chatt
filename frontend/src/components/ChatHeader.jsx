@@ -1,9 +1,9 @@
-import { X } from "lucide-react";
+import { X, Trash2 } from "lucide-react";
 import useChatStore from "../store/useChatStore";
 import useAuthStore from "../store/useAuthStore";
 
 const ChatHeader = () => {
-    const { selectedUser, setSelectedUser } = useChatStore();
+    const { selectedUser, setSelectedUser, clearChat } = useChatStore();
     const { onlineUsers } = useAuthStore();
 
     return (
@@ -26,12 +26,29 @@ const ChatHeader = () => {
                     </div>
                 </div>
 
-                {/* Close button */}
-                <button onClick={() => setSelectedUser(null)}>
-                    <X />
-                </button>
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2">
+                    {/* Clear Chat Button */}
+                    <button
+                        className="p-2 rounded hover:bg-red-100"
+                        onClick={async () => {
+                            if (confirm("Are you sure you want to clear this chat?")) {
+                                await clearChat();
+                            }
+                        }}
+                        title="Clear Chat"
+                    >
+                        <Trash2 className="text-red-500" />
+                    </button>
+
+                    {/* Close Button */}
+                    <button onClick={() => setSelectedUser(null)} title="Close Chat">
+                        <X />
+                    </button>
+                </div>
             </div>
         </div>
     );
 };
+
 export default ChatHeader;
